@@ -4,7 +4,7 @@
     <section id="hero">
       <div class="container mx-auto md:w-4/5">
         <div class="pt-10 md:grid md:grid-cols-2">
-          <div class="px-5 text-center sm:px-0 sm:text-left">
+          <div class="pb-10 text-center sm:px-0 sm:text-left">
             <h1
               class="text-4xl font-bold text-slate-700 sm:text-6xl md:text-5xl"
             >
@@ -22,7 +22,7 @@
             >
           </div>
           <img
-            class="ms-auto hidden w-11/12 md:block"
+            class="ms-auto mt-auto hidden w-11/12 md:block"
             src="/images/sitrendi-about.png"
             alt="phone-about"
           />
@@ -36,9 +36,9 @@
         class="container mx-auto items-center gap-10 px-5 py-10 md:grid md:grid-cols-2 md:px-0 lg:w-4/5"
       >
         <div class="mx-auto">
-          <h3 class="text-3xl font-bold text-slate-700">Apa itu <br /></h3>
-          <h2 class="text-4xl font-bold text-blue-500">
-            SiTrendi<span>?</span>
+          <h3 class="text-4xl font-bold text-slate-700">Apa itu <br /></h3>
+          <h2 class="text-5xl font-bold text-sky-700">
+            SiTrendi<span class="text-slate-700">?</span>
           </h2>
         </div>
         <p class="text-gray-800 lg:text-lg">
@@ -106,15 +106,21 @@
           Cek Status Implementasi
         </h2>
         <div>
-          <form class="flex items-end justify-center" action="" method="get">
+          <form
+            @submit.prevent="checkImplementation"
+            class="flex items-end justify-center"
+          >
             <input
               class="mt-10 rounded bg-slate-100 p-2 italic placeholder-slate-500 outline outline-1 outline-slate-300 focus:outline-blue-500 md:w-1/2"
-              type="text"
+              type="number"
+              v-model="kodeBooking"
               placeholder="Masukkan Nomor Booking"
+              required
             />
             <button
               class="ml-2 rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
               type="submit"
+              label="Show"
             >
               Cek Status
             </button>
@@ -122,13 +128,59 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal -->
+    <div class="card justify-content-center flex">
+      <Dialog
+        v-model:visible="visible"
+        modal
+        header="Cek Status Implementasi"
+        :style="{ width: '35rem' }"
+      >
+        <div v-if="modal.success === false">
+          <p class="text-center text-red-500">Nomor Booking Tidak Ditemukan</p>
+        </div>
+
+        <table v-if="modal.success === true" class="table-auto">
+          <tr>
+            <td class="px-4 py-2">Pesantren</td>
+            <td class="px-4 py-2">: {{ modal.pesantren }}</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Jenjang Pendidikan</td>
+            <td class="px-4 py-2">: {{ modal.jenjangPendidikan }}</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Alamat</td>
+            <td class="px-4 py-2">: {{ modal.alamat }}</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Status Implementasi</td>
+            <td
+              class="px-4 py-2"
+              :class="
+                modal.statusImplementasi === 'Belum di Implementasi'
+                  ? 'text-red-500'
+                  : 'text-green-500'
+              "
+            >
+              <span class="text-black">:</span>
+              {{ modal.statusImplementasi }}
+            </td>
+          </tr>
+        </table>
+      </Dialog>
+    </div>
   </DefaultLayout>
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
+import Dialog from "primevue/dialog";
 import DefaultLayout from "@/layouts/Default.vue";
 import Card from "@/components/Card.vue";
+import { ref } from "vue";
+import { RouterLink } from "vue-router";
+import axios from "axios";
 
 const cards = [
   {
@@ -183,4 +235,43 @@ const partners = [
     altText: "partner-5",
   },
 ];
+
+const kodeBooking = ref("");
+const visible = ref(false);
+const modal = ref({
+  show: false,
+  success: false,
+  pesantren: "",
+  jenjangPendidikan: "",
+  alamat: "",
+  statusImplementasi: "",
+});
+
+const checkImplementation = async () => {
+  const { data: response } = await axios.post(
+    import.meta.env.VITE_APP_API_URL + "/checkBooking",
+    { kodeBooking: kodeBooking.value },
+  );
+
+  console.log(response);
+
+  visible.value = true;
+  modal.value.show = true;
+  modal.value.success = response.success;
+
+  if (!response.success) {
+    return;
+  }
+
+  modal.value.pesantren = response.data.nama;
+  modal.value.jenjangPendidikan = response.data.jenjangPendidikan;
+  modal.value.alamat = response.data.alamat;
+  modal.value.statusImplementasi = response.data.bookings[0].statusImplementasi;
+};
+
+const allowNumbersOnly = (event) => {
+  if (isNaN(Number(event.key))) {
+    event.preventDefault();
+  }
+};
 </script>
