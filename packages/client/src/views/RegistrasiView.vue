@@ -13,13 +13,13 @@
           </h2>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label for="namaLembaga" class="block text-gray-700"
-                >Nama Lembaga</label
+              <label for="namaPesantren" class="block text-gray-700"
+                >Nama Pesantren</label
               >
               <InputText
-                id="namaLembaga"
-                v-model="form.namaLembaga"
-                placeholder="Masukkan Nama Lembaga"
+                id="namaPesantren"
+                v-model="form.namaPesantren"
+                placeholder="Masukkan Nama Pesantren"
                 required
               />
             </div>
@@ -63,13 +63,13 @@
               />
             </div>
             <div>
-              <label for="alamatLembaga" class="block text-gray-700"
-                >Alamat Lembaga</label
+              <label for="alamatPesantren" class="block text-gray-700"
+                >Alamat Pesantren</label
               >
               <Textarea
-                id="alamatLembaga"
-                v-model="form.alamatLembaga"
-                placeholder="Masukkan Alamat Lembaga"
+                id="alamatPesantren"
+                v-model="form.alamatPesantren"
+                placeholder="Masukkan Alamat Pesantren"
                 required
               />
             </div>
@@ -107,6 +107,39 @@
         <p class="font-bold">Notifikasi</p>
         <p>{{ notificationMessage }}</p>
       </div>
+
+      <!-- modal  -->
+      <Dialog
+        v-model:visible="visible"
+        modal
+        header="Daftar Booking Berhasil"
+        :style="{ width: '40rem' }"
+      >
+        <h3 class="px-6 text-lg font-medium leading-6 text-slate-800">
+          Terima Kasih Telah Mendaftar!
+        </h3>
+        <div class="px-7 py-3">
+          <p class="text-sm text-gray-500">
+            Pendaftaran Anda untuk implementasi SiTrendi telah kami terima. Kode
+            booking telah dikirim ke email Anda. Silakan cek email Anda untuk
+            melihat detail lebih lanjut dan mengikuti instruksi untuk proses
+            selanjutnya.
+          </p>
+        </div>
+        <div class="px-7 py-3 text-left">
+          <ul class="ml-5 list-disc text-left text-sm text-gray-500">
+            <li>
+              Verifikasi Email: Pastikan Anda telah menerima email dari kami dan
+              melakukan verifikasi jika diperlukan.
+            </li>
+            <li>
+              Tunggu Konfirmasi: Tim kami akan mengulas pendaftaran Anda dan
+              menghubungi Anda dalam waktu 1-3 hari kerja untuk mengkonfirmasi
+              jadwal implementasi.
+            </li>
+          </ul>
+        </div>
+      </Dialog>
     </section>
   </DefaultLayout>
 </template>
@@ -120,26 +153,28 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 
 const showNotification = ref(false);
 const notificationMessage = ref("");
 const loading = ref(false);
+const visible = ref(false);
 
 const form = ref({
-  namaLembaga: "",
+  namaPesantren: "",
   jenjangPendidikan: "",
   emailPetugas: "",
   namaPetugas: "",
   teleponPetugas: "",
-  alamatLembaga: "",
+  alamatPesantren: "",
   statusKonfirmasi: "menunggu konfirmasi",
   kodeBooking: "",
 });
 
 const jenjangPendidikan = [
-  { name: "SD / SDIT", code: "sd" },
-  { name: "SMP / MTs", code: "smp" },
-  { name: "SMA / SMK / MA", code: "sma" },
+  { name: "SDIT", code: "SDIT" },
+  { name: "MTs", code: "MTs" },
+  { name: "MA", code: "MA" },
 ];
 
 const res = ref("");
@@ -148,12 +183,12 @@ const handleSubmit = async () => {
   try {
     loading.value = true;
     if (
-      !form.value.namaLembaga ||
+      !form.value.namaPesantren ||
       !form.value.jenjangPendidikan ||
       !form.value.emailPetugas ||
       !form.value.namaPetugas ||
       !form.value.teleponPetugas ||
-      !form.value.alamatLembaga
+      !form.value.alamatPesantren
     ) {
       loading.value = false;
       showNotification.value = true;
@@ -166,10 +201,12 @@ const handleSubmit = async () => {
 
     // Proses permintaan
     const { data } = await axios.post(
-      import.meta.env.VITE_APP_API_URL + "/register",
+      import.meta.env.VITE_APP_API_URL + "/bookingImplementasi",
       form.value,
     );
     res.value = data;
+
+    visible.value = true;
 
     showNotification.value = true;
     notificationMessage.value = Array.isArray(res.value.message)

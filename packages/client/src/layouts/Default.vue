@@ -23,7 +23,7 @@
     <slot />
 
     <footer class="bg-zinc-200">
-      <div class="mx-auto flex gap-10 py-5 lg:w-4/5">
+      <div class="mx-auto gap-10 py-5 md:grid md:grid-cols-2 lg:w-4/5">
         <div>
           <h2
             class="mb-5 text-2xl font-bold text-slate-700 md:text-3xl lg:text-4xl"
@@ -33,7 +33,7 @@
           <img class="w-32" src="/images/play-store.png" alt="play-store" />
         </div>
         <img
-          class="hidden rounded-lg object-cover lg:block"
+          class="ms-auto hidden rounded-lg object-cover lg:block"
           src="/images/qr-code.png"
           alt="qr-code"
         />
