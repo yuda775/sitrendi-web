@@ -114,7 +114,7 @@
               class="mt-10 rounded bg-slate-100 p-2 italic placeholder-slate-500 outline outline-1 outline-slate-300 focus:outline-blue-500 md:w-1/2"
               type="number"
               v-model="kodeBooking"
-              placeholder="Masukkan Nomor Booking"
+              placeholder="Masukkan Kode Booking"
               required
             />
             <button
