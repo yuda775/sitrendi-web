@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
+import serverless from "serverless-http";
 
 const app = express();
 const port = 3000;
@@ -13,15 +14,13 @@ app.use(helmet());
 app.use(morgan());
 
 // Routes
-import bookingController from "./controllers/bookingController.js";
+import bookingController from "../../controllers/bookingController.js";
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("SiTrendi API!");
 });
 
 app.post("/bookingImplementasi", bookingController.bookingImplementation);
 app.post("/checkBooking", bookingController.checkBooking);
 
-app.listen(port, () => {
-  console.log(`Server started on http://localhost:${port}`);
-});
+export const handler = serverless(app);
