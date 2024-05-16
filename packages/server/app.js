@@ -14,7 +14,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 // Routes
-import bookingController from "../../controllers/bookingController.js";
+import bookingController from "./controllers/bookingController.js";
 
 app.get("/", (req, res) => {
   res.send("SiTrendi API!");

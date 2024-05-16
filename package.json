@@ -19,7 +19,6 @@
   "dependencies": {
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
-    "url": "^0.11.3",
-    "netlify-cli": "^17.23.5"
+    "url": "^0.11.3"
   }
 }
